@@ -8,7 +8,7 @@
     <!-- Define the servlet -->
     <servlet>
         <servlet-name>Hello</servlet-name> <!-- connects to mapping-->
-        <servlet-class>HelloServlets</servlet-class>
+        <servlet-class>HelloServlets</servlet-class><!--clss-->
     </servlet>
 
     <!-- Define the URL mapping -->
