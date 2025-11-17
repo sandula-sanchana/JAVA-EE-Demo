@@ -6,15 +6,15 @@
          version="4.0">
 
     <!-- Define the servlet -->
-    <servlet>
-        <servlet-name>Hello</servlet-name> <!-- connects to mapping-->
-        <servlet-class>HelloServlets</servlet-class><!--clss-->
-    </servlet>
+<!--    <servlet>-->
+<!--        <servlet-name>Hello</servlet-name> &lt;!&ndash; connects to mapping&ndash;&gt;-->
+<!--        <servlet-class>HelloServlets</servlet-class>&lt;!&ndash;clss&ndash;&gt;-->
+<!--    </servlet>-->
 
-    <!-- Define the URL mapping -->
-    <servlet-mapping>
-        <servlet-name>Hello</servlet-name>
-        <url-pattern>/hello</url-pattern>
-    </servlet-mapping>
+<!--    &lt;!&ndash; Define the URL mapping &ndash;&gt;-->
+<!--    <servlet-mapping>-->
+<!--        <servlet-name>Hello</servlet-name>-->
+<!--        <url-pattern>/hello</url-pattern>-->
+<!--    </servlet-mapping>-->
 
 </web-app>
