@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>HALOOOOO</h1>
+<div id="content"></div>
+
+<input type="text">
+<input type="text">
+<input type="text">
+
+<button id="buttonSave">
+    get
+</button>
+<button id="buttonPut">
+    put
+</button>
+<button id="buttonPOst">
+    post
+</button>
+<button id="buttonDelete">
+    delete
+</button>
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+<script>
+    const buttonGet=$('#buttonSave');
+    const buttonPut=$('#buttonPut');
+    const buttonPost=$('#buttonPOst');
+    const buttonDelete=$('#buttonDelete');
+    const content=$('#content');
+
+    buttonGet.on('click',function (){
+        $.ajax({
+            url:"http://localhost:8080/Day01_war_exploded/hello",
+            method:"GET",
+            success:function (resp){
+               console.log("success get")
+            },
+            error:function () {
+              console.log("error")
+            }
+        })
+    })
+
+    buttonPost.on('click',function (){
+        $.ajax({
+            url:"http://localhost:8080/Day01_war_exploded/hello",
+            method:"POST",
+            success:function (resp){
+                console.log("success post")
+            },
+            error:function () {
+                console.log("error")
+            }
+        })
+    })
+
+    buttonPut.on('click',function (){
+        $.ajax({
+            url:"http://localhost:8080/Day01_war_exploded/hello",
+            method:"PUT",
+            success:function (resp){
+                console.log("success put")
+            },
+            error:function () {
+                console.log("error")
+            }
+        })
+    })
+
+    buttonDelete.on('click',function (){
+        $.ajax({
+            url:"http://localhost:8080/Day01_war_exploded/hello",
+            method:"DELETE",
+            success:function (resp){
+                console.log("success delete")
+            },
+            error:function () {
+                console.log("error")
+            }
+        })
+    })
+
+
+</script>
+</body>
+</html>

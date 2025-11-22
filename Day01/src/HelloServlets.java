@@ -14,6 +14,7 @@ public class HelloServlets extends HttpServlet {
 //        super.doGet(req, resp);
 
         System.out.println("Hello Servlets");
+        System.out.println("get");
         PrintWriter out = resp.getWriter();
         out.println("<h1>Hello Servlets</h1>");
     }

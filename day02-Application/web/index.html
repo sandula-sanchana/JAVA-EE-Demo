@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Customer CRUD</title>
+</head>
+<body>
+<h1>HALOOOOO</h1>
+
+<input type="text" id="cus_id" placeholder="id">
+<input type="text" id="cus_name" placeholder="name">
+<input type="text" id="cus_address" placeholder="address">
+
+<button id="buttonGet">GET</button>
+<button id="buttonPost">POST</button>
+<button id="buttonPut">PUT</button>
+<button id="buttonDelete">DELETE</button>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">id</th>
+        <th scope="col">name</th>
+        <th scope="col">address</th>
+    </tr>
+    </thead>
+    <tbody id="tableBody">
+    </tbody>
+</table>
+
+<div id="content"></div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+
+<script>
+
+    const API_URL = "http://localhost:8080/day02_Application_Web_exploded/customer";
+
+    const buttonGet    = $('#buttonGet');
+    const buttonPost   = $('#buttonPost');
+    const buttonPut    = $('#buttonPut');
+    const buttonDelete = $('#buttonDelete');
+
+    const cusid      = $('#cus_id');
+    const cusname    = $('#cus_name');
+    const cusaddress = $('#cus_address');
+
+    const content=$('#content');
+    // Helper for building URL with params
+    function buildUrl() {
+        return API_URL
+            + "?id=" + cusid.val()
+            + "&name=" + cusname.val()
+            + "&address=" + cusaddress.val();
+    }
+
+    // ------------ GET ------------
+    buttonGet.on('click', function () {
+        $.ajax({
+            url: buildUrl(),
+            method: "GET",
+            success: function (resp) {
+                content.empty();
+                content.append(resp);
+                console.log("success GET", resp);
+            },
+            error: function (err) {
+                console.log("error GET", err);
+            }
+        });
+    });
+
+    // ------------ POST ------------
+    buttonPost.on('click', function () {
+        $.ajax({
+            url: buildUrl(),
+            method: "POST",
+            success: function (resp) {
+                console.log("success POST", resp);
+            },
+            error: function (err) {
+                console.log("error POST", err);
+            }
+        });
+    });
+
+    // ------------ PUT ------------
+    buttonPut.on('click', function () {
+        $.ajax({
+            url: buildUrl(),
+            method: "PUT",
+            success: function (resp) {
+                console.log("success PUT", resp);
+            },
+            error: function (err) {
+                console.log("error PUT", err);
+            }
+        });
+    });
+
+    // ------------ DELETE ------------
+    buttonDelete.on('click', function () {
+        $.ajax({
+            url: buildUrl(),
+            method: "DELETE",
+            success: function (resp) {
+                console.log("success DELETE", resp);
+            },
+            error: function (err) {
+                console.log("error DELETE", err);
+            }
+        });
+    });
+
+    function addToTable(customerList) {
+        $("#tableBody").empty();  // clear table
+
+        customerList.forEach((customer, index) => {
+            const row = `
+            <tr>
+                <td>${index + 1}</td>
+                <td>${customer.id}</td>
+                <td>${customer.name}</td>
+                <td>${customer.address}</td>
+            </tr>
+        `;
+            $("#tableBody").append(row);
+        });
+    }
+
+
+
+</script>
+
+</body>
+</html>
