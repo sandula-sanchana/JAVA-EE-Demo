@@ -57,4 +57,11 @@ public class CustomerServlet extends HttpServlet {
             //System.out.println(customers.size());
         }
     }
+
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String id = req.getParameter("id").trim();
+
+        customers.removeIf(c -> c.getId().equals(id));
+    }
 }
