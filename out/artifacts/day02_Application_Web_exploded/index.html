@@ -153,7 +153,7 @@
     // DELETE
     buttonDelete.on('click', function () {
         $.ajax({
-            url: buildUrl(),
+            url: API_URL + "?id=" + cusid.val(),
             method: "DELETE",
             success: function (resp) {
                 content.html("<b>DELETE Response:</b> " + resp);
