@@ -6,6 +6,10 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 
@@ -19,7 +23,26 @@ public class CustomerServlet extends HttpServlet {
        String name= req.getParameter("name");
        String addr= req.getParameter("address");
 
-       customers.add(new CustomerDto(id,name,addr));
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/javaeeapp","root","92540010");
+            String query = "insert into customer values(?,?,?)";
+            PreparedStatement ps = connection.prepareStatement(query);
+            int idInt = Integer.parseInt(id);
+            ps.setInt(1,idInt );
+            ps.setString(2, name);
+            ps.setString(3, addr);
+            int rowInserted = ps.executeUpdate();
+            if(rowInserted>0){
+                resp.getWriter().println("Customer Save Successfully");
+            }else {
+                resp.getWriter().println("Customer Save Failed");
+            }
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 
