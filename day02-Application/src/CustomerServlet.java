@@ -11,6 +11,11 @@ import java.sql.*;
 @WebServlet(urlPatterns = "/customer")
 public class CustomerServlet extends HttpServlet {
 
+    @Override
+    public void init() throws ServletException {
+        super.init();
+    }
+
     private Connection getConnection() throws SQLException, ClassNotFoundException {
         Class.forName("com.mysql.cj.jdbc.Driver");
         return DriverManager.getConnection(
