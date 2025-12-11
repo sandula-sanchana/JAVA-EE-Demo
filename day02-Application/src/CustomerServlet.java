@@ -31,7 +31,7 @@ public class CustomerServlet extends HttpServlet {
         String addr = req.getParameter("address");
 
         try (Connection con = getConnection()) {
-            String query = "INSERT INTO customer VALUES (?,?,?)";
+            String query = "INSERT INTO customers VALUES (?,?,?)";
             PreparedStatement ps = con.prepareStatement(query);
 
             ps.setInt(1, Integer.parseInt(id));
