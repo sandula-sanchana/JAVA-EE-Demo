@@ -3,6 +3,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.commons.dbcp2.BasicDataSource;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -10,22 +11,16 @@ import java.sql.*;
 
 @WebServlet(urlPatterns = "/dbcp")
 public class DBCPServlet extends HttpServlet {
-
+    BasicDataSource ds ;
     @Override
     public void init() throws ServletException {
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver"); // Load driver once
-        } catch (ClassNotFoundException e) {
-            throw new ServletException("MySQL Driver not found", e);
-        }
-    }
-
-    private Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(
-                "jdbc:mysql://localhost:3306/javaeeapp",
-                "root",
-                "92540010"
-        );
+        ds = new BasicDataSource();
+       ds.setDriverClassName("com.mysql.jdbc.Driver");
+       ds.setUrl("jdbc:mysql://localhost:3306/javaeeapp");
+       ds.setUsername("root");
+       ds.setPassword("92540010");
+       ds.setInitialSize(5);
+       ds.setMaxTotal(5);
     }
 
     @Override
@@ -36,7 +31,7 @@ public class DBCPServlet extends HttpServlet {
 
         String sql = "INSERT INTO customer VALUES (?,?,?)";
 
-        try (Connection con = getConnection();
+        try (Connection con = ds.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setInt(1, Integer.parseInt(id));
@@ -57,7 +52,7 @@ public class DBCPServlet extends HttpServlet {
 
         String sql = "SELECT * FROM customer";
 
-        try (Connection con = getConnection();
+        try (Connection con = ds.getConnection();
              PreparedStatement ps = con.prepareStatement(sql);
              ResultSet rs = ps.executeQuery();
              PrintWriter out = resp.getWriter()) {
@@ -86,7 +81,7 @@ public class DBCPServlet extends HttpServlet {
 
         String sql = "UPDATE customer SET name=?, address=? WHERE id=?";
 
-        try (Connection con = getConnection();
+        try (Connection con =ds.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setString(1, name);
@@ -107,7 +102,7 @@ public class DBCPServlet extends HttpServlet {
 
         String sql = "DELETE FROM customer WHERE id=?";
 
-        try (Connection con = getConnection();
+        try (Connection con = ds.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setInt(1, Integer.parseInt(id));
