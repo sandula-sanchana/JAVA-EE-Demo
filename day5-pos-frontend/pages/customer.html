@@ -47,11 +47,20 @@
         const cid=$('#custId').val();
         const cname=$('#custName').val();
         const caddrr=$('#custAddress').val();
-        alert("Save clicked   "+cid +"   "+cname+"   "+caddrr);
 
+        const datas={
+            "id":cid,
+            "name":cname,
+            "address":caddrr
+        }
         $.ajax({
             url:'http://localhost:8080/day5_pos_backend_Web_exploded/api/v1/customer',
             method:'POST',
+            data:JSON.stringify({
+                "id":cid,
+                "name":cname,
+                "address":caddrr
+            }),
             success:function (response){
                 console.log(response)
             }

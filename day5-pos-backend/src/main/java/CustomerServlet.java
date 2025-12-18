@@ -1,3 +1,5 @@
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -11,6 +13,9 @@ public class CustomerServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         System.out.println("do post pos");
+        Gson gson = new Gson();
+        JsonObject jsonObject =gson.fromJson(req.getReader(), JsonObject.class);
+        System.out.println("jsonObject:"+jsonObject);
     }
 
     @Override
