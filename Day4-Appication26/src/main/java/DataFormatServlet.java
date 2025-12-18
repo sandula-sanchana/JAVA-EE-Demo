@@ -13,5 +13,13 @@ public class DataFormatServlet extends HttpServlet {
         String contentType = req.getContentType();
         System.out.println("contentType:"+contentType);
         System.out.println(req.getParameter("name"));//for query param
+
+        /// /////////////////////////////////////////////////////////////////
+
+//        System.out.println(req.getParameter("id"));//x-www form url encoded
+
+        /// //////////////////////////////////////////////////////////////
+
+        System.out.println(req.getParameter("age"));
     }
 }
