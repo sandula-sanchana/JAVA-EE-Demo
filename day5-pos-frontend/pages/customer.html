@@ -60,6 +60,14 @@
 
     function updateCustomer() {
         alert("Update clicked");
+
+        $.ajax({
+            url:'http://localhost:8080/day5_pos_backend_Web_exploded/api/v1/customer',
+            method:'PUT',
+            success:function (response){
+                console.log(response)
+            }
+        })
     }
 
     function deleteCustomer() {
