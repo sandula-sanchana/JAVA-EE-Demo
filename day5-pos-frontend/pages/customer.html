@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Customer</title>
+    <link rel="stylesheet" href="../styles/styles.css">
+</head>
+<body>
+
+<header>
+    <nav>
+        <a href="../index.html">home</a>
+        <a href="./customer.html" class="active">cus</a>
+        <a href="./item.html">item</a>
+        <a href="./order.html">order</a>
+    </nav>
+</header>
+
+<h1>Customer Management</h1>
+
+<section class="form-container">
+    <div class="form-group">
+        <label for="custId">Customer ID</label>
+        <input type="text" id="custId" placeholder="C001">
+    </div>
+
+    <div class="form-group">
+        <label for="custName">Customer Name</label>
+        <input type="text" id="custName" placeholder="John Doe">
+    </div>
+
+    <div class="form-group">
+        <label for="custAddress">Customer Address</label>
+        <input type="text" id="custAddress" placeholder="Colombo">
+    </div>
+
+    <div class="btn-group">
+        <button onclick="saveCustomer()">Save</button>
+        <button onclick="updateCustomer()">Update</button>
+        <button onclick="deleteCustomer()">Delete</button>
+    </div>
+</section>
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script>
+    function saveCustomer() {
+
+        const cid=$('#custId').val();
+        const cname=$('#custName').val();
+        const caddrr=$('#custAddress').val();
+        alert("Save clicked   "+cid +"   "+cname+"   "+caddrr);
+    }
+
+    function updateCustomer() {
+        alert("Update clicked");
+    }
+
+    function deleteCustomer() {
+        alert("Delete clicked");
+    }
+</script>
+
+</body>
+</html>

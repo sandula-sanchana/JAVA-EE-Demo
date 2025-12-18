@@ -9,7 +9,7 @@ import jakarta.servlet.http.Part;
 import java.io.File;
 import java.io.IOException;
 
-@WebServlet(urlPatterns = "/data-formats")
+@WebServlet(urlPatterns = "/data-formats/*")
 @MultipartConfig
 public class DataFormatServlet extends HttpServlet {
     @Override
@@ -24,20 +24,25 @@ public class DataFormatServlet extends HttpServlet {
 
         /// //////////////////////////////////////////////////////////////
 
-        System.out.println(req.getParameter("age"));//form data// u need @multiplepartconfig annotation
+//        System.out.println(req.getParameter("age"));//form data// u need @multiplepartconfig annotation
+//
+//        Part filePart = req.getPart("image");
+//        String fileName = filePart.getSubmittedFileName();
+//        System.out.println("fileName:"+fileName);
+//        File dir = new File("/home/sandula-sanchana/Desktop/GDSE73/JAVA-EE-THEORY/Day4-Appication26/src/main/resources/images");
+//        if (!dir.exists()) {
+//            dir.mkdir();
+//        }
+//
+//        String uploadPath = dir.getAbsolutePath() + File.separator + fileName;
+//        filePart.write(uploadPath);
+//
+//        resp.getWriter().println("Image uploaded successfully");
 
-        Part filePart = req.getPart("image");
-        String fileName = filePart.getSubmittedFileName();
-        System.out.println("fileName:"+fileName);
-        File dir = new File("/home/sandula-sanchana/Desktop/GDSE73/JAVA-EE-THEORY/Day4-Appication26/src/main/resources/images");
-        if (!dir.exists()) {
-            dir.mkdir();
-        }
 
-        String uploadPath = dir.getAbsolutePath() + File.separator + fileName;
-        filePart.write(uploadPath);
+        /// //////////////////////////////////////////////////////////////////////////////////////
 
-        resp.getWriter().println("Image uploaded successfully");
+        //System.out.println(req.getFile);// path variable
 
     }
 }
