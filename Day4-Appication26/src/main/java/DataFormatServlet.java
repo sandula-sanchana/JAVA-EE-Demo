@@ -12,5 +12,6 @@ public class DataFormatServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String contentType = req.getContentType();
         System.out.println("contentType:"+contentType);
+        System.out.println(req.getParameter("name"));//for query param
     }
 }
