@@ -48,6 +48,14 @@
         const cname=$('#custName').val();
         const caddrr=$('#custAddress').val();
         alert("Save clicked   "+cid +"   "+cname+"   "+caddrr);
+
+        $.ajax({
+            url:'http://localhost:8080/day5_pos_backend_Web_exploded/api/v1/customer',
+            method:'POST',
+            success:function (response){
+                console.log(response)
+            }
+        })
     }
 
     function updateCustomer() {
