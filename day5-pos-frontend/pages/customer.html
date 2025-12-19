@@ -96,6 +96,9 @@
 
     $('#tboday').on('click','tr',function (){
         selected_row_id=$(this).data('id');
+        $('#custId').val($(this).data('id'));
+        $('#custName').val($(this).data('name'));
+        $('#custAddress').val($(this).data('address'));
         console.log(selected_row_id)
     })
 
@@ -149,6 +152,8 @@
                     dataType: 'json',
                     success: function(response) {
                         Swal.fire({ icon: 'success', title: 'Deleted', text: response.message });
+                        selected_row_id=null;
+                        $('#custId, #custName, #custAddress').val(''); // clear the form
                         getCus();
                     },
                     error: function(xhr) {
@@ -169,7 +174,7 @@
                 const tbody = $('#customerTable tbody');
                 tbody.empty();
                 customers.forEach(c => {
-                    tbody.append(`<tr data-id=${c.id} >
+                    tbody.append(`<tr data-id="${c.id}" data-name="${c.name}" data-address="${c.address}" >
                         <td>${c.id}</td>
                         <td>${c.name}</td>
                         <td>${c.address}</td>
