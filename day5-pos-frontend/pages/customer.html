@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Customer</title>
+    <title>Customer Management</title>
     <link rel="stylesheet" href="../styles/styles.css">
 </head>
 <body>
@@ -18,6 +18,7 @@
 
 <h1>Customer Management</h1>
 
+<!-- Customer Form -->
 <section class="form-container">
     <div class="form-group">
         <label for="custId">Customer ID</label>
@@ -37,51 +38,154 @@
     <div class="btn-group">
         <button onclick="saveCustomer()">Save</button>
         <button onclick="updateCustomer()">Update</button>
+        <button onclick="getCus()">Get All Customers</button>
         <button onclick="deleteCustomer()">Delete</button>
     </div>
 </section>
+
+<!-- Customer Table -->
+<section id="customer-list">
+    <h2>Customer List</h2>
+    <table id="customerTable" border="1" cellpadding="5" cellspacing="0">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Address</th>
+        </tr>
+        </thead>
+        <tbody id="tboday">
+
+        </tbody>
+    </table>
+</section>
+
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
+    const baseUrl = 'http://localhost:8080/day5_pos_backend_Web_exploded/api/v1/customer';
+
+    let selected_row_id=null;
+
     function saveCustomer() {
+        const cid = $('#custId').val();
+        const cname = $('#custName').val();
+        const caddr = $('#custAddress').val();
 
-        const cid=$('#custId').val();
-        const cname=$('#custName').val();
-        const caddrr=$('#custAddress').val();
-
-        const datas={
-            "id":cid,
-            "name":cname,
-            "address":caddrr
+        if (!cid || !cname || !caddr) {
+            Swal.fire({ icon: 'warning', title: 'Incomplete Data', text: 'Please fill all fields' });
+            return;
         }
+
         $.ajax({
-            url:'http://localhost:8080/day5_pos_backend_Web_exploded/api/v1/customer',
-            method:'POST',
-            data:JSON.stringify({
-                "id":cid,
-                "name":cname,
-                "address":caddrr
-            }),
-            success:function (response){
-                console.log(response)
+            url: baseUrl,
+            method: 'POST',
+            contentType: "application/json",
+            dataType: 'json',
+            data: JSON.stringify({ id: cid, name: cname, address: caddr }),
+            success: function(response) {
+                Swal.fire({ icon: 'success', title: 'Saved', text: response.message });
+                getCus();
+            },
+            error: function(xhr) {
+                const res = xhr.responseJSON;
+                Swal.fire({ icon: 'error', title: 'Save Failed', text: res ? res.message : 'Server error' });
             }
-        })
+        });
     }
 
+    $('#tboday').on('click','tr',function (){
+        selected_row_id=$(this).data('id');
+        console.log(selected_row_id)
+    })
+
     function updateCustomer() {
-        alert("Update clicked");
+        const cid = $('#custId').val();
+        const cname = $('#custName').val();
+        const caddr = $('#custAddress').val();
+
+        if (!cid || !cname || !caddr) {
+            Swal.fire({ icon: 'warning', title: 'Incomplete Data', text: 'Please fill all fields' });
+            return;
+        }
 
         $.ajax({
-            url:'http://localhost:8080/day5_pos_backend_Web_exploded/api/v1/customer',
-            method:'PUT',
-            success:function (response){
-                console.log(response)
+            url: baseUrl,
+            method: 'PUT',
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify({ id: cid, name: cname, address: caddr }),
+            success: function(response) {
+                Swal.fire({ icon: 'success', title: 'Updated', text: response.message });
+                getCus();
+            },
+            error: function(xhr) {
+                const res = xhr.responseJSON;
+                Swal.fire({ icon: 'error', title: 'Update Failed', text: res ? res.message : 'Server error' });
             }
-        })
+        });
     }
 
     function deleteCustomer() {
-        alert("Delete clicked");
+        const cid = $('#custId').val();
+
+        if (!cid) {
+            Swal.fire({ icon: 'warning', title: 'Enter ID', text: 'Please enter customer ID to delete' });
+            return;
+        }
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: `Delete customer with ID: ${cid}?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `${baseUrl}?id=${cid}`,
+                    method: 'DELETE',
+                    dataType: 'json',
+                    success: function(response) {
+                        Swal.fire({ icon: 'success', title: 'Deleted', text: response.message });
+                        getCus();
+                    },
+                    error: function(xhr) {
+                        const res = xhr.responseJSON;
+                        Swal.fire({ icon: 'error', title: 'Delete Failed', text: res ? res.message : 'Server error' });
+                    }
+                });
+            }
+        });
     }
+
+    function getCus() {
+        $.ajax({
+            url: baseUrl,
+            method: 'GET',
+            dataType: 'json',
+            success: function(customers) {
+                const tbody = $('#customerTable tbody');
+                tbody.empty();
+                customers.forEach(c => {
+                    tbody.append(`<tr data-id=${c.id} >
+                        <td>${c.id}</td>
+                        <td>${c.name}</td>
+                        <td>${c.address}</td>
+                    </tr>`);
+                });
+            },
+            error: function(xhr) {
+                Swal.fire({ icon: 'error', title: 'Fetch Failed', text: 'Could not load customers' });
+            }
+        });
+    }
+
+    // Load all customers on page load
+    $(document).ready(function() {
+        getCus();
+    });
 </script>
 
 </body>
