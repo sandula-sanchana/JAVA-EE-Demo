@@ -2,23 +2,222 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Item Management</title>
     <link rel="stylesheet" href="../styles/styles.css">
 </head>
 <body>
+
 <header>
     <nav>
         <a href="../index.html">home</a>
         <a href="./customer.html">cus</a>
-        <a href="./item.html">item</a>
+        <a href="./item.html" class="active">item</a>
         <a href="./order.html">order</a>
     </nav>
 </header>
 
-<h1>item</h1>
+<h1>Item Management</h1>
 
+<!-- Item Form -->
+<section class="form-container">
+    <div class="form-group">
+        <label for="itemId">Item ID</label>
+        <input type="text" id="itemId" placeholder="I001">
+    </div>
+
+    <div class="form-group">
+        <label for="itemName">Item Name</label>
+        <input type="text" id="itemName" placeholder="Chocolate Cake">
+    </div>
+
+    <div class="form-group">
+        <label for="itemPrice">Item Price</label>
+        <input type="number" id="itemPrice" placeholder="1500">
+    </div>
+
+    <div class="form-group">
+        <label for="itemQty">Quantity</label>
+        <input type="number" id="itemQty" placeholder="10">
+    </div>
+
+    <div class="btn-group">
+        <button onclick="saveItem()">Save</button>
+        <button onclick="updateItem()">Update</button>
+        <button onclick="getItems()">Get All Items</button>
+        <button onclick="deleteItem()">Delete</button>
+    </div>
+</section>
+
+<!-- Item Table -->
+<section id="item-list">
+    <h2>Item List</h2>
+    <table id="itemTable" border="1" cellpadding="5" cellspacing="0">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Quantity</th>
+        </tr>
+        </thead>
+        <tbody id="itemTbody">
+
+        </tbody>
+    </table>
+</section>
 
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    const baseUrl = 'http://localhost:8080/day5_pos_backend_Web_exploded/api/v1/item';
+    let selected_row_id = null;
+
+    function saveItem() {
+        const id = $('#itemId').val();
+        const name = $('#itemName').val();
+        const price = $('#itemPrice').val();
+        const qty = $('#itemQty').val();
+
+        if (!id || !name || !price || !qty) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Incomplete Data',
+                text: 'Please fill all fields'
+            });
+            return;
+        }
+
+        $.ajax({
+            url: baseUrl,
+            method: 'POST',
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify({ id, name, price, qty }),
+            success: function (response) {
+                Swal.fire({ icon: 'success', title: 'Saved', text: response.message });
+                getItems();
+            },
+            error: function (xhr) {
+                const res = xhr.responseJSON;
+                Swal.fire({ icon: 'error', title: 'Save Failed', text: res ? res.message : 'Server error' });
+            }
+        });
+    }
+
+    $('#itemTbody').on('click', 'tr', function () {
+        selected_row_id = $(this).data('id');
+        $('#itemId').val($(this).data('id'));
+        $('#itemName').val($(this).data('name'));
+        $('#itemPrice').val($(this).data('price'));
+        $('#itemQty').val($(this).data('qty'));
+    });
+
+    function updateItem() {
+        const id = $('#itemId').val();
+        const name = $('#itemName').val();
+        const price = $('#itemPrice').val();
+        const qty = $('#itemQty').val();
+
+        if (!id || !name || !price || !qty) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Incomplete Data',
+                text: 'Please fill all fields'
+            });
+            return;
+        }
+
+        $.ajax({
+            url: baseUrl,
+            method: 'PUT',
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify({ id, name, price, qty }),
+            success: function (response) {
+                Swal.fire({ icon: 'success', title: 'Updated', text: response.message });
+                getItems();
+            },
+            error: function (xhr) {
+                const res = xhr.responseJSON;
+                Swal.fire({ icon: 'error', title: 'Update Failed', text: res ? res.message : 'Server error' });
+            }
+        });
+    }
+
+    function deleteItem() {
+        const id = $('#itemId').val();
+
+        if (!id) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Enter ID',
+                text: 'Please enter item ID to delete'
+            });
+            return;
+        }
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: `Delete item with ID: ${id}?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `${baseUrl}?id=${id}`,
+                    method: 'DELETE',
+                    dataType: 'json',
+                    success: function (response) {
+                        Swal.fire({ icon: 'success', title: 'Deleted', text: response.message });
+                        selected_row_id = null;
+                        $('#itemId, #itemName, #itemPrice, #itemQty').val('');
+                        getItems();
+                    },
+                    error: function (xhr) {
+                        const res = xhr.responseJSON;
+                        Swal.fire({ icon: 'error', title: 'Delete Failed', text: res ? res.message : 'Server error' });
+                    }
+                });
+            }
+        });
+    }
+
+    function getItems() {
+        $.ajax({
+            url: baseUrl,
+            method: 'GET',
+            dataType: 'json',
+            success: function (items) {
+                const tbody = $('#itemTable tbody');
+                tbody.empty();
+                items.forEach(i => {
+                    tbody.append(`
+                        <tr data-id="${i.id}"
+                            data-name="${i.name}"
+                            data-price="${i.price}"
+                            data-qty="${i.qty}">
+                            <td>${i.id}</td>
+                            <td>${i.name}</td>
+                            <td>${i.price}</td>
+                            <td>${i.qty}</td>
+                        </tr>
+                    `);
+                });
+            },
+            error: function () {
+                Swal.fire({ icon: 'error', title: 'Fetch Failed', text: 'Could not load items' });
+            }
+        });
+    }
+
+    // Load items on page load
+    $(document).ready(function () {
+        getItems();
+    });
+</script>
+
 </body>
 </html>
