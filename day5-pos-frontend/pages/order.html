@@ -183,7 +183,7 @@
             <div class="form-row">
                 <div>
                     <label>Order ID</label>
-                    <input id="orderId" placeholder="O001">
+                    <input id="orderId" placeholder="O001" readonly>
                 </div>
                 <div>
                     <label>Customer</label>
@@ -234,53 +234,60 @@
     </div>
 
 </div>
-
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     let cart = [];
     let itemsMap = {};
 
-    window.onload = () => {
+    $(document).ready(function () {
         loadNextOrderId();
         loadCustomers();
         loadItems();
-    };
+    });
 
     // ---------------- LOAD CUSTOMERS ----------------
     function loadCustomers() {
-        fetch("http://localhost:8080/day5_pos_backend_Web_exploded/api/v1/customer")
-            .then(res => res.json())
-            .then(data => {
-                customerId.innerHTML = `<option value="">Select Customer</option>`;
+        $.ajax({
+            url: "http://localhost:8080/day5_pos_backend_Web_exploded/api/v1/customer",
+            method: "GET",
+            dataType: "json",
+            success: function (data) {
+                $("#customerId").html('<option value="">Select Customer</option>');
                 data.forEach(c => {
-                    customerId.innerHTML += `
-                        <option value="${c.id}">
-                            ${c.id} - ${c.name}
-                        </option>`;
+                    $("#customerId").append(`<option value="${c.id}">${c.id} - ${c.name}</option>`);
                 });
-            });
+            },
+            error: function () {
+                alert("Failed to load customers");
+            }
+        });
     }
 
     // ---------------- LOAD ITEMS ----------------
     function loadItems() {
-        fetch("http://localhost:8080/day5_pos_backend_Web_exploded/api/v1/item")
-            .then(res => res.json())
-            .then(data => {
-                itemId.innerHTML = `<option value="">Select Item</option>`;
+        $.ajax({
+            url: "http://localhost:8080/day5_pos_backend_Web_exploded/api/v1/item",
+            method: "GET",
+            dataType: "json",
+            success: function (data) {
+                $("#itemId").html('<option value="">Select Item</option>');
                 itemsMap = {};
                 data.forEach(i => {
                     itemsMap[i.id] = i.price;
-                    itemId.innerHTML += `
-                        <option value="${i.id}">
-                            ${i.id} - ${i.name}
-                        </option>`;
+                    $("#itemId").append(`<option value="${i.id}">${i.id} - ${i.name}</option>`);
                 });
-            });
+            },
+            error: function () {
+                alert("Failed to load items");
+            }
+        });
     }
 
     // ---------------- ADD TO CART ----------------
     function addToCart() {
-        const itemCode = itemId.value;
-        const qtyVal = parseInt(qty.value);
+        const itemCode = $("#itemId").val();
+        const qtyVal = parseInt($("#qty").val());
         const price = itemsMap[itemCode];
 
         if (!itemCode || !qtyVal || qtyVal <= 0) {
@@ -289,7 +296,6 @@
         }
 
         const existing = cart.find(c => c.itemCode === itemCode);
-
         if (existing) {
             existing.qty += qtyVal;
             existing.total = existing.qty * price;
@@ -302,28 +308,29 @@
             });
         }
 
-        qty.value = "";
+        $("#qty").val("");
         renderCart();
     }
 
     // ---------------- RENDER CART ----------------
     function renderCart() {
-        cartBody.innerHTML = "";
+        $("#cartBody").html("");
         let sum = 0;
 
         cart.forEach((c, i) => {
             sum += c.total;
-            cartBody.innerHTML += `
+            $("#cartBody").append(`
                 <tr>
                     <td>${c.itemCode}</td>
                     <td>${c.qty}</td>
                     <td>${c.unitPrice}</td>
                     <td>${c.total}</td>
                     <td class="delete-btn" onclick="removeItem(${i})">✕</td>
-                </tr>`;
+                </tr>
+            `);
         });
 
-        total.innerText = sum;
+        $("#total").text(sum);
     }
 
     function removeItem(i) {
@@ -333,16 +340,15 @@
 
     // ---------------- PLACE ORDER ----------------
     function placeOrder() {
-
-        if (!orderId.value || !customerId.value || cart.length === 0) {
+        if (!$("#orderId").val() || !$("#customerId").val() || cart.length === 0) {
             alert("Incomplete order!");
             return;
         }
 
         const orderPayload = {
-            orderId: orderId.value,
-            date: new Date().toISOString().split("T")[0], // yyyy-mm-dd
-            customerId: customerId.value,
+            orderId: $("#orderId").val(),
+            date: new Date().toISOString().split("T")[0],
+            customerId: $("#customerId").val(),
             orderDetails: cart.map(c => ({
                 itemCode: c.itemCode,
                 qty: c.qty,
@@ -350,41 +356,41 @@
             }))
         };
 
-        fetch("http://localhost:8080/day5_pos_backend_Web_exploded/api/v1/orders", {
+        $.ajax({
+            url: "http://localhost:8080/day5_pos_backend_Web_exploded/api/v1/orders",
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(orderPayload)
-        })
-            .then(res => {
-                if (!res.ok) throw new Error("Order failed");
-                return res.json();
-            })
-            .then(() => {
-                alert("Order placed successfully!");
+            contentType: "application/json",
+            data: JSON.stringify(orderPayload),
+            success: function (response) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Saved',
+                    text: response.message
+                });
                 cart = [];
                 renderCart();
                 loadNextOrderId();
-            })
-            .catch(err => {
-                alert("Order failed: " + err.message);
-            });
+            },
+            error: function (xhr) {
+                alert("Order failed: " + xhr.responseText);
+            }
+        });
     }
 
     // ---------------- NEXT ORDER ID ----------------
     function loadNextOrderId() {
-        fetch("http://localhost:8080/day5_pos_backend_Web_exploded/api/v1/orders?nextId=true")
-            .then(res => res.json())
-            .then(data => {
-                orderId.value = data.nextOrderId;
-            })
-            .catch(() => {
-                orderId.value = "O001";
-            });
+        $.ajax({
+            url: "http://localhost:8080/day5_pos_backend_Web_exploded/api/v1/orders?nextId=true",
+            method: "GET",
+            dataType: "json",
+            success: function (data) {
+                $("#orderId").val(data.nextOrderId);
+            },
+            error: function () {
+                $("#orderId").val("O001");
+            }
+        });
     }
 </script>
-
-
 </body>
 </html>

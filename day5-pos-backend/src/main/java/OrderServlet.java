@@ -2,7 +2,6 @@
 
 import com.google.gson.*;
 import jakarta.servlet.ServletContext;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import org.apache.commons.dbcp2.BasicDataSource;
@@ -17,8 +16,9 @@ public class OrderServlet extends HttpServlet {
 
     @Override
     public void init() {
+        // Get the datasource from ServletContext
         ServletContext context = getServletContext();
-        ds = (BasicDataSource) context.getAttribute("datasource");
+        ds = (BasicDataSource) context.getAttribute("ds");
     }
 
     // ================== PLACE ORDER ==================
@@ -27,7 +27,6 @@ public class OrderServlet extends HttpServlet {
             throws IOException {
 
         resp.setContentType("application/json");
-
         Gson gson = new Gson();
         JsonObject json = gson.fromJson(req.getReader(), JsonObject.class);
 
@@ -40,9 +39,9 @@ public class OrderServlet extends HttpServlet {
 
         try {
             con = ds.getConnection();
-            con.setAutoCommit(false); // 🔐 start transaction
+            con.setAutoCommit(false); // Start transaction
 
-            // 1️⃣ Insert order
+
             PreparedStatement orderStmt = con.prepareStatement(
                     "INSERT INTO orders (id, date, customer_id) VALUES (?,?,?)"
             );
@@ -56,20 +55,20 @@ public class OrderServlet extends HttpServlet {
                 return;
             }
 
-            // 2️⃣ Prepare statements
+
             PreparedStatement detailStmt = con.prepareStatement(
                     "INSERT INTO order_details (order_id, item_id, qty, price) VALUES (?,?,?,?)"
             );
 
             PreparedStatement stockCheckStmt = con.prepareStatement(
-                    "SELECT qty_on_hand FROM item WHERE code=?"
+                    "SELECT qty FROM item WHERE id=?"
             );
 
             PreparedStatement stockUpdateStmt = con.prepareStatement(
-                    "UPDATE item SET qty_on_hand = qty_on_hand - ? WHERE code=?"
+                    "UPDATE item SET qty = qty - ? WHERE id=?"
             );
 
-            // 3️⃣ Process order details
+
             for (JsonElement el : orderDetails) {
                 JsonObject obj = el.getAsJsonObject();
 
@@ -77,32 +76,31 @@ public class OrderServlet extends HttpServlet {
                 int qty = obj.get("qty").getAsInt();
                 double price = obj.get("unitPrice").getAsDouble();
 
-                // 🔍 Stock check
+
                 stockCheckStmt.setString(1, itemCode);
                 ResultSet rs = stockCheckStmt.executeQuery();
 
-                if (!rs.next() || rs.getInt("qty_on_hand") < qty) {
+                if (!rs.next() || rs.getInt("qty") < qty) {
                     con.rollback();
                     sendError(resp, "Insufficient stock for item: " + itemCode);
                     return;
                 }
 
-                // 📦 Insert order detail
+
                 detailStmt.setString(1, orderId);
                 detailStmt.setString(2, itemCode);
                 detailStmt.setInt(3, qty);
                 detailStmt.setDouble(4, price);
                 detailStmt.executeUpdate();
 
-                // 📉 Update stock
+
                 stockUpdateStmt.setInt(1, qty);
                 stockUpdateStmt.setString(2, itemCode);
                 stockUpdateStmt.executeUpdate();
             }
 
-            // ✅ Commit transaction
-            con.commit();
 
+            con.commit();
             resp.setStatus(HttpServletResponse.SC_CREATED);
             resp.getWriter().write("{\"status\":\"OK\",\"message\":\"Order placed successfully\"}");
 
@@ -110,7 +108,6 @@ public class OrderServlet extends HttpServlet {
             try {
                 if (con != null) con.rollback();
             } catch (SQLException ignored) {}
-
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             resp.getWriter().write("{\"status\":\"ERROR\",\"message\":\"" + e.getMessage() + "\"}");
 
@@ -124,13 +121,14 @@ public class OrderServlet extends HttpServlet {
         }
     }
 
-
     // ================== GET NEXT ORDER ID ==================
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws IOException {
 
+        // Only respond if nextId=true query param is present
         if ("true".equals(req.getParameter("nextId"))) {
+            resp.setContentType("application/json");
 
             try (Connection con = ds.getConnection()) {
 
@@ -138,14 +136,14 @@ public class OrderServlet extends HttpServlet {
                         "SELECT id FROM orders ORDER BY id DESC LIMIT 1"
                 ).executeQuery();
 
-                String nextId = "O001";
+                String nextId = "O001"; // default first ID
 
                 if (rs.next()) {
-                    int num = Integer.parseInt(rs.getString(1).substring(1)) + 1;
+                    String lastId = rs.getString("id"); // e.g., "O005"
+                    int num = Integer.parseInt(lastId.substring(1)) + 1;
                     nextId = String.format("O%03d", num);
                 }
 
-                resp.setContentType("application/json");
                 resp.getWriter().write("{\"nextOrderId\":\"" + nextId + "\"}");
 
             } catch (SQLException e) {
@@ -155,7 +153,7 @@ public class OrderServlet extends HttpServlet {
         }
     }
 
-
+    // -------------------- HELPER --------------------
     private void sendError(HttpServletResponse resp, String msg) throws IOException {
         resp.setStatus(400);
         resp.getWriter().write("{\"error\":\"" + msg + "\"}");
