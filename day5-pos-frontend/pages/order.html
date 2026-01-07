@@ -1,20 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-    <link rel="stylesheet" href="../styles/styles.css">
-</head>
-<body>
-<header>
-    <nav>
-        <a href="../index.html">home</a>
-        <a href="./customer.html">cus</a>
-        <a href="./item.html">item</a>
-        <a href="./order.html">order</a>
-    </nav>
-</header>
-<h1>order</h1>
+<h1>Order Management</h1>
 
-</body>
-</html>
+<section>
+    <label>Order ID</label>
+    <input id="orderId" placeholder="O001">
+
+    <label>Customer ID</label>
+    <input id="customerId" placeholder="1">
+
+    <label>Item ID</label>
+    <input id="itemId" placeholder="I001">
+
+    <label>Qty</label>
+    <input id="qty" type="number">
+
+    <button onclick="addToCart()">Add</button>
+</section>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>Item</th>
+        <th>Qty</th>
+        <th>Price</th>
+        <th>Total</th>
+    </tr>
+    </thead>
+    <tbody id="cartBody"></tbody>
+</table>
+
+<h3>Total: <span id="total">0</span></h3>
+
+<button onclick="placeOrder()">Place Order</button>
