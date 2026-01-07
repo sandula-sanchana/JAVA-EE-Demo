@@ -1,33 +1,176 @@
-<h1>Order Management</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../styles/styles.css">
+    <style>
+        /* ====== GLOBAL ====== */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f8;
+            margin: 0;
+            padding: 0;
+        }
 
-<section>
-    <label>Order ID</label>
-    <input id="orderId" placeholder="O001">
+        h1 {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .form-container {
+            width: 60%;
+            margin: 20px auto;
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
 
-    <label>Customer ID</label>
-    <input id="customerId" placeholder="1">
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 15px;
+        }
 
-    <label>Item ID</label>
-    <input id="itemId" placeholder="I001">
+        .form-group label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
 
-    <label>Qty</label>
-    <input id="qty" type="number">
+        .form-group input {
+            padding: 8px;
+            font-size: 14px;
+        }
 
-    <button onclick="addToCart()">Add</button>
+        /* ====== BUTTONS ====== */
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-group button {
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            background-color: #00d1b2;
+            color: white;
+            border-radius: 4px;
+        }
+
+        .btn-group button:hover {
+            background-color: #00b89c;
+        }
+
+        /* ====== CART TABLE ====== */
+        #cart-section {
+            width: 70%;
+            margin: 30px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        table th, table td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+
+        table th {
+            background-color: #222;
+            color: white;
+        }
+
+        /* ====== TOTAL ====== */
+        .total-box {
+            text-align: right;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        /* ====== PLACE ORDER BUTTON ====== */
+        .place-order-btn {
+            display: block;
+            margin: 20px auto 0;
+            padding: 12px 25px;
+            background-color: #ff4757;
+            color: white;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .place-order-btn:hover {
+            background-color: #e84118;
+        }
+
+    </style>
+</head>
+<body>
+<header>
+    <nav>
+        <a href="../index.html">home</a>
+        <a href="./customer.html">cus</a>
+        <a href="./item.html">item</a>
+        <a href="./order.html">order</a>
+    </nav>
+    <h1>Order Management</h1>
+</header>
+<section class="form-container">
+    <div class="form-group">
+        <label>Order ID</label>
+        <input id="orderId" placeholder="O001">
+    </div>
+
+    <div class="form-group">
+        <label>Customer ID</label>
+        <input id="customerId" placeholder="1">
+    </div>
+
+    <div class="form-group">
+        <label>Item ID</label>
+        <input id="itemId" placeholder="I001">
+    </div>
+
+    <div class="form-group">
+        <label>Quantity</label>
+        <input id="qty" type="number">
+    </div>
+
+    <div class="btn-group">
+        <button onclick="addToCart()">Add To Cart</button>
+    </div>
 </section>
 
-<table border="1">
-    <thead>
-    <tr>
-        <th>Item</th>
-        <th>Qty</th>
-        <th>Price</th>
-        <th>Total</th>
-    </tr>
-    </thead>
-    <tbody id="cartBody"></tbody>
-</table>
+<section id="cart-section">
+    <table>
+        <thead>
+        <tr>
+            <th>Item ID</th>
+            <th>Qty</th>
+            <th>Price</th>
+            <th>Total</th>
+        </tr>
+        </thead>
+        <tbody id="cartBody"></tbody>
+    </table>
 
-<h3>Total: <span id="total">0</span></h3>
+    <div class="total-box">
+        Total: Rs. <span id="total">0</span>
+    </div>
 
-<button onclick="placeOrder()">Place Order</button>
+    <button class="place-order-btn" onclick="placeOrder()">Place Order</button>
+</section>
+</body>
+</html>
