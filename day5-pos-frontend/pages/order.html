@@ -2,122 +2,167 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-    <link rel="stylesheet" href="../styles/styles.css">
+    <title>Order Management</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+
     <style>
-        /* ====== GLOBAL ====== */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f6f8;
+        :root {
+            --primary: #6366f1;
+            --secondary: #64748b;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --danger: #ef4444;
+            --dark: #0f172a;
+        }
+
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+            font-family: "Plus Jakarta Sans", sans-serif;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--dark);
+        }
+
+        header {
+            background: white;
+            padding: 15px 40px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        nav a {
+            margin-right: 20px;
+            text-decoration: none;
+            color: var(--secondary);
+            font-weight: 600;
         }
 
         h1 {
-            text-align: center;
-            margin: 20px 0;
-        }
-        .form-container {
-            width: 60%;
-            margin: 20px auto;
-            background: white;
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin-top: 10px;
         }
 
-        .form-group {
-            display: flex;
-            flex-direction: column;
+        .container {
+            padding: 30px 40px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 25px;
+            border: 1px solid var(--border);
+        }
+
+        .card h3 {
+            margin-bottom: 15px;
+            color: var(--primary);
+            font-size: 16px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
             margin-bottom: 15px;
         }
 
-        .form-group label {
-            font-weight: bold;
-            margin-bottom: 5px;
+        label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--secondary);
+            margin-bottom: 6px;
+            display: block;
         }
 
-        .form-group input {
-            padding: 8px;
-            font-size: 14px;
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: var(--bg);
         }
 
-        /* ====== BUTTONS ====== */
-        .btn-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .btn-group button {
-            padding: 10px 15px;
+        .btn {
+            padding: 14px;
+            border-radius: 12px;
             border: none;
+            font-weight: 700;
             cursor: pointer;
-            font-weight: bold;
-            background-color: #00d1b2;
+        }
+
+        .btn-add {
+            background: var(--primary);
             color: white;
-            border-radius: 4px;
+            width: 100%;
         }
 
-        .btn-group button:hover {
-            background-color: #00b89c;
-        }
-
-        /* ====== CART TABLE ====== */
-        #cart-section {
-            width: 70%;
-            margin: 30px auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        .btn-place {
+            background: var(--success);
+            color: white;
+            width: 100%;
+            margin-top: 15px;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 15px;
         }
 
-        table th, table td {
-            padding: 10px;
-            border: 1px solid #ccc;
+        th {
+            background: var(--bg);
+            padding: 14px;
+            font-size: 12px;
+            color: var(--secondary);
+            text-align: left;
+        }
+
+        td {
+            padding: 14px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .delete-btn {
+            color: var(--danger);
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .summary {
+            background: var(--dark);
+            color: white;
+            padding: 25px;
+            border-radius: 16px;
             text-align: center;
         }
 
-        table th {
-            background-color: #222;
-            color: white;
+        .summary span {
+            font-size: 13px;
+            opacity: 0.7;
         }
 
-        /* ====== TOTAL ====== */
-        .total-box {
-            text-align: right;
-            font-size: 18px;
-            font-weight: bold;
-            margin-top: 15px;
+        .summary h2 {
+            font-size: 34px;
+            color: var(--primary);
+            margin: 10px 0;
         }
-
-        /* ====== PLACE ORDER BUTTON ====== */
-        .place-order-btn {
-            display: block;
-            margin: 20px auto 0;
-            padding: 12px 25px;
-            background-color: #ff4757;
-            color: white;
-            font-size: 16px;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-
-        .place-order-btn:hover {
-            background-color: #e84118;
-        }
-
     </style>
 </head>
+
 <body>
+
 <header>
     <nav>
         <a href="../index.html">home</a>
@@ -127,50 +172,179 @@
     </nav>
     <h1>Order Management</h1>
 </header>
-<section class="form-container">
-    <div class="form-group">
-        <label>Order ID</label>
-        <input id="orderId" placeholder="O001">
+
+<div class="container">
+
+    <div class="grid">
+        <!-- ORDER FORM -->
+        <div class="card">
+            <h3>Order Details</h3>
+
+            <div class="form-row">
+                <div>
+                    <label>Order ID</label>
+                    <input id="orderId" placeholder="O001">
+                </div>
+                <div>
+                    <label>Customer</label>
+                    <select id="customerId"></select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div>
+                    <label>Item</label>
+                    <select id="itemId"></select>
+                </div>
+                <div>
+                    <label>Quantity</label>
+                    <input id="qty" type="number">
+                </div>
+            </div>
+
+            <button class="btn btn-add" onclick="addToCart()">Add to Cart</button>
+        </div>
+
+        <!-- CART -->
+        <div class="card">
+            <h3>Cart</h3>
+            <table>
+                <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Qty</th>
+                    <th>Price</th>
+                    <th>Total</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody id="cartBody"></tbody>
+            </table>
+        </div>
     </div>
 
-    <div class="form-group">
-        <label>Customer ID</label>
-        <input id="customerId" placeholder="1">
+    <!-- SUMMARY -->
+    <div class="grid" style="grid-template-columns: 2fr 1fr;">
+        <div></div>
+        <div class="summary">
+            <span>Grand Total</span>
+            <h2>Rs. <span id="total">0</span></h2>
+            <button class="btn btn-place" onclick="placeOrder()">Place Order</button>
+        </div>
     </div>
 
-    <div class="form-group">
-        <label>Item ID</label>
-        <input id="itemId" placeholder="I001">
-    </div>
+</div>
 
-    <div class="form-group">
-        <label>Quantity</label>
-        <input id="qty" type="number">
-    </div>
+<script>
+    let cart = [];
+    let itemsMap = {};
 
-    <div class="btn-group">
-        <button onclick="addToCart()">Add To Cart</button>
-    </div>
-</section>
+    window.onload = () => {
+        loadNextOrderId();
+        loadCustomers();
+        loadItems();
+    };
 
-<section id="cart-section">
-    <table>
-        <thead>
-        <tr>
-            <th>Item ID</th>
-            <th>Qty</th>
-            <th>Price</th>
-            <th>Total</th>
-        </tr>
-        </thead>
-        <tbody id="cartBody"></tbody>
-    </table>
+    // LOAD CUSTOMERS
+    function loadCustomers() {
+        fetch("http://localhost:8080/day5_pos_backend_Web_exploded/api/v1/customer")
+            .then(res => res.json())
+            .then(data => {
+                customerId.innerHTML = `<option value="">Select Customer</option>`;
+                data.forEach(c => {
+                    customerId.innerHTML += `
+                        <option value="${c.id}">
+                            ${c.id} - ${c.name}
+                        </option>`;
+                });
+            });
+    }
 
-    <div class="total-box">
-        Total: Rs. <span id="total">0</span>
-    </div>
+    // LOAD ITEMS
+    function loadItems() {
+        fetch("http://localhost:8080/day5_pos_backend_Web_exploded/api/v1/item")
+            .then(res => res.json())
+            .then(data => {
+                itemId.innerHTML = `<option value="">Select Item</option>`;
+                data.forEach(i => {
+                    itemsMap[i.id] = i.price;
+                    itemId.innerHTML += `
+                        <option value="${i.id}">
+                            ${i.id} - ${i.name}
+                        </option>`;
+                });
+            });
+    }
 
-    <button class="place-order-btn" onclick="placeOrder()">Place Order</button>
-</section>
+    function addToCart() {
+        const item = itemId.value;
+        const qtyVal = parseInt(qty.value);
+        const price = itemsMap[item];
+
+        if (!item || !qtyVal || qtyVal <= 0) {
+            alert("Invalid input");
+            return;
+        }
+
+        const existing = cart.find(c => c.item === item);
+        if (existing) {
+            existing.qtyVal += qtyVal;
+            existing.total = existing.qtyVal * price;
+        } else {
+            cart.push({ item, qtyVal, price, total: qtyVal * price });
+        }
+
+        renderCart();
+    }
+
+    function renderCart() {
+        cartBody.innerHTML = "";
+        let sum = 0;
+
+        cart.forEach((c, i) => {
+            sum += c.total;
+            cartBody.innerHTML += `
+                <tr>
+                    <td>${c.item}</td>
+                    <td>${c.qtyVal}</td>
+                    <td>${c.price}</td>
+                    <td>${c.total}</td>
+                    <td class="delete-btn" onclick="removeItem(${i})">✕</td>
+                </tr>`;
+        });
+
+        total.innerText = sum;
+    }
+
+    function removeItem(i) {
+        cart.splice(i, 1);
+        renderCart();
+    }
+
+    function placeOrder() {
+        if (!orderId.value || !customerId.value || cart.length === 0) {
+            alert("Incomplete order!");
+            return;
+        }
+
+        alert("Order placed successfully!");
+        cart = [];
+        renderCart();
+    }
+
+    function loadNextOrderId() {
+        fetch("../order?nextId=true")
+            .then(res => res.json())
+            .then(data => {
+                // Assuming servlet returns: { "nextId": "O002" }
+                orderId.value = data.nextId;
+            })
+            .catch(err => {
+                console.error("Failed to fetch next order ID:", err);
+                orderId.value = "O001"; // fallback
+            });
+    }
+</script>
+
 </body>
 </html>
