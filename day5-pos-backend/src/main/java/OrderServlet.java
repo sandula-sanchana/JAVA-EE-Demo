@@ -130,27 +130,31 @@ public class OrderServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws IOException {
 
-        try (Connection con = ds.getConnection()) {
+        if ("true".equals(req.getParameter("nextId"))) {
 
-            ResultSet rs = con.prepareStatement(
-                    "SELECT order_id FROM orders ORDER BY order_id DESC LIMIT 1"
-            ).executeQuery();
+            try (Connection con = ds.getConnection()) {
 
-            String nextId = "O001";
+                ResultSet rs = con.prepareStatement(
+                        "SELECT id FROM orders ORDER BY id DESC LIMIT 1"
+                ).executeQuery();
 
-            if (rs.next()) {
-                int num = Integer.parseInt(rs.getString(1).substring(1)) + 1;
-                nextId = String.format("O%03d", num);
+                String nextId = "O001";
+
+                if (rs.next()) {
+                    int num = Integer.parseInt(rs.getString(1).substring(1)) + 1;
+                    nextId = String.format("O%03d", num);
+                }
+
+                resp.setContentType("application/json");
+                resp.getWriter().write("{\"nextOrderId\":\"" + nextId + "\"}");
+
+            } catch (SQLException e) {
+                resp.setStatus(500);
+                resp.getWriter().write("{\"error\":\"DB error\"}");
             }
-
-            resp.setContentType("application/json");
-            resp.getWriter().write("{\"nextOrderId\":\"" + nextId + "\"}");
-
-        } catch (SQLException e) {
-            resp.setStatus(500);
-            resp.getWriter().write("{\"error\":\"DB error\"}");
         }
     }
+
 
     private void sendError(HttpServletResponse resp, String msg) throws IOException {
         resp.setStatus(400);

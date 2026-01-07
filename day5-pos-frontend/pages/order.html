@@ -245,7 +245,7 @@
         loadItems();
     };
 
-    // LOAD CUSTOMERS
+    // ---------------- LOAD CUSTOMERS ----------------
     function loadCustomers() {
         fetch("http://localhost:8080/day5_pos_backend_Web_exploded/api/v1/customer")
             .then(res => res.json())
@@ -260,12 +260,13 @@
             });
     }
 
-    // LOAD ITEMS
+    // ---------------- LOAD ITEMS ----------------
     function loadItems() {
         fetch("http://localhost:8080/day5_pos_backend_Web_exploded/api/v1/item")
             .then(res => res.json())
             .then(data => {
                 itemId.innerHTML = `<option value="">Select Item</option>`;
+                itemsMap = {};
                 data.forEach(i => {
                     itemsMap[i.id] = i.price;
                     itemId.innerHTML += `
@@ -276,27 +277,36 @@
             });
     }
 
+    // ---------------- ADD TO CART ----------------
     function addToCart() {
-        const item = itemId.value;
+        const itemCode = itemId.value;
         const qtyVal = parseInt(qty.value);
-        const price = itemsMap[item];
+        const price = itemsMap[itemCode];
 
-        if (!item || !qtyVal || qtyVal <= 0) {
+        if (!itemCode || !qtyVal || qtyVal <= 0) {
             alert("Invalid input");
             return;
         }
 
-        const existing = cart.find(c => c.item === item);
+        const existing = cart.find(c => c.itemCode === itemCode);
+
         if (existing) {
-            existing.qtyVal += qtyVal;
-            existing.total = existing.qtyVal * price;
+            existing.qty += qtyVal;
+            existing.total = existing.qty * price;
         } else {
-            cart.push({ item, qtyVal, price, total: qtyVal * price });
+            cart.push({
+                itemCode,
+                qty: qtyVal,
+                unitPrice: price,
+                total: qtyVal * price
+            });
         }
 
+        qty.value = "";
         renderCart();
     }
 
+    // ---------------- RENDER CART ----------------
     function renderCart() {
         cartBody.innerHTML = "";
         let sum = 0;
@@ -305,9 +315,9 @@
             sum += c.total;
             cartBody.innerHTML += `
                 <tr>
-                    <td>${c.item}</td>
-                    <td>${c.qtyVal}</td>
-                    <td>${c.price}</td>
+                    <td>${c.itemCode}</td>
+                    <td>${c.qty}</td>
+                    <td>${c.unitPrice}</td>
                     <td>${c.total}</td>
                     <td class="delete-btn" onclick="removeItem(${i})">✕</td>
                 </tr>`;
@@ -321,30 +331,60 @@
         renderCart();
     }
 
+    // ---------------- PLACE ORDER ----------------
     function placeOrder() {
+
         if (!orderId.value || !customerId.value || cart.length === 0) {
             alert("Incomplete order!");
             return;
         }
 
-        alert("Order placed successfully!");
-        cart = [];
-        renderCart();
-    }
+        const orderPayload = {
+            orderId: orderId.value,
+            date: new Date().toISOString().split("T")[0], // yyyy-mm-dd
+            customerId: customerId.value,
+            orderDetails: cart.map(c => ({
+                itemCode: c.itemCode,
+                qty: c.qty,
+                unitPrice: c.unitPrice
+            }))
+        };
 
-    function loadNextOrderId() {
-        fetch("../order?nextId=true")
-            .then(res => res.json())
-            .then(data => {
-                // Assuming servlet returns: { "nextId": "O002" }
-                orderId.value = data.nextId;
+        fetch("http://localhost:8080/day5_pos_backend_Web_exploded/api/v1/orders", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(orderPayload)
+        })
+            .then(res => {
+                if (!res.ok) throw new Error("Order failed");
+                return res.json();
+            })
+            .then(() => {
+                alert("Order placed successfully!");
+                cart = [];
+                renderCart();
+                loadNextOrderId();
             })
             .catch(err => {
-                console.error("Failed to fetch next order ID:", err);
-                orderId.value = "O001"; // fallback
+                alert("Order failed: " + err.message);
+            });
+    }
+
+    // ---------------- NEXT ORDER ID ----------------
+    function loadNextOrderId() {
+        fetch("http://localhost:8080/day5_pos_backend_Web_exploded/api/v1/orders?nextId=true")
+            .then(res => res.json())
+            .then(data => {
+                orderId.value = data.nextOrderId;
+            })
+            .catch(() => {
+                orderId.value = "O001";
             });
     }
 </script>
+
 
 </body>
 </html>
