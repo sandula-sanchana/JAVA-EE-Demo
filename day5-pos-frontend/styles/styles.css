@@ -1,135 +1,218 @@
-/* Reset */
+/* =====================
+   Global Styles
+===================== */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Body */
 body {
-    background-color: #f4f6f8;
-    color: #333;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    min-height: 100vh;
+    color: #ffffff;
+    padding-bottom: 50px;
 }
 
-/* Header */
+/* =====================
+   Header & Navigation
+===================== */
 header {
-    background-color: #1e293b;
-    padding: 15px 30px;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+    padding: 15px 40px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.4);
 }
 
-/* Navigation */
 nav {
     display: flex;
-    gap: 20px;
+    gap: 25px;
 }
 
-/* Nav links */
 nav a {
-    color: #ffffff;
+    color: #dfe6e9;
     text-decoration: none;
     font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
     padding: 8px 14px;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
+    border-radius: 6px;
+    transition: all 0.3s ease;
 }
 
-/* Hover effect */
 nav a:hover {
-    background-color: #334155;
+    background: #00cec9;
+    color: #000;
 }
 
-/* Active page (optional later) */
 nav a.active {
-    background-color: #0ea5e9;
+    background: #0984e3;
+    color: #fff;
 }
 
-/* Page title */
+/* =====================
+   Page Title
+===================== */
 h1 {
-    margin-top: 80px;
     text-align: center;
-    font-size: 42px;
-    color: #1e293b;
+    margin: 30px 0;
+    font-size: 36px;
+    letter-spacing: 1px;
+    color: #00cec9;
 }
 
-/* Responsive */
-@media (max-width: 600px) {
-    nav {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    h1 {
-        font-size: 32px;
-    }
-}
-
-/* Form Container */
+/* =====================
+   Form Container
+===================== */
 .form-container {
-    width: 400px;
-    margin: 40px auto;
-    background: #ffffff;
-    padding: 25px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 60%;
+    margin: 0 auto 40px;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(15px);
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
 }
 
-/* Input Group */
 .form-group {
-    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 18px;
 }
 
 .form-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: #1e293b;
+    margin-bottom: 6px;
+    font-size: 14px;
+    color: #b2bec3;
 }
 
 .form-group input {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #cbd5e1;
-    border-radius: 4px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    font-size: 15px;
+    background: rgba(255,255,255,0.9);
+    transition: box-shadow 0.3s ease;
 }
 
-/* Buttons */
+.form-group input:focus {
+    box-shadow: 0 0 0 3px rgba(0,206,201,0.4);
+}
+
+/* =====================
+   Buttons
+===================== */
 .btn-group {
     display: flex;
     justify-content: space-between;
+    gap: 12px;
     margin-top: 20px;
 }
 
 .btn-group button {
-    padding: 8px 16px;
+    flex: 1;
+    padding: 12px 0;
+    border-radius: 10px;
     border: none;
-    border-radius: 4px;
-    cursor: pointer;
+    font-size: 14px;
     font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
-/* Button colors */
+/* Individual button colors */
 .btn-group button:nth-child(1) {
-    background-color: #22c55e; /* Save */
-    color: white;
+    background: #00b894;
+    color: #000;
 }
 
 .btn-group button:nth-child(2) {
-    background-color: #0ea5e9; /* Update */
-    color: white;
+    background: #0984e3;
+    color: #fff;
 }
 
 .btn-group button:nth-child(3) {
-    background-color: #ef4444; /* Delete */
-    color: white;
+    background: #fdcb6e;
+    color: #000;
 }
 
-/* Hover */
+.btn-group button:nth-child(4) {
+    background: #d63031;
+    color: #fff;
+}
+
 .btn-group button:hover {
+    transform: translateY(-2px);
     opacity: 0.9;
 }
 
-#customer-list, #item-list{
+/* =====================
+   Customer List Section
+===================== */
+#customer-list {
+    width: 80%;
+    margin: 0 auto;
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(15px);
+    padding: 25px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+
+#customer-list h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #74b9ff;
+}
+
+/* =====================
+   Table Styling
+===================== */
+table {
     width: 100%;
-    background: #00b89c;
+    border-collapse: collapse;
+    background: transparent;
+}
+
+thead {
+    background: rgba(9,132,227,0.8);
+}
+
+thead th {
+    padding: 12px;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+tbody tr {
+    transition: background 0.3s ease, transform 0.2s ease;
+    cursor: pointer;
+}
+
+tbody tr:hover {
+    background: rgba(0,206,201,0.2);
+    transform: scale(1.01);
+}
+
+tbody td {
+    padding: 12px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+/* =====================
+   Responsive Design
+===================== */
+@media (max-width: 900px) {
+    .form-container,
+    #customer-list {
+        width: 90%;
+    }
+
+    .btn-group {
+        flex-direction: column;
+    }
 }
